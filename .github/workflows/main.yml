@@ -27,8 +27,8 @@ jobs:
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: MyApplicationName
-        environment_name: MyApplication-Environment
-        version_label: 12345
+        application_name: FooMaster
+        environment_name: Foomaster-env
+        version_label: 1_0
         region: us-west-2
         deployment_package: deploy.zip
