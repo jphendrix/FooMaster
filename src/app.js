@@ -3,8 +3,6 @@ var port = process.env.PORT || 3000,
     url = require('url'),
     fs = require('fs');
 
-    var l = "<h1>hello world</h1>"
-
 var log = function(entry) {
     let d = new Date();
     d.setHours(d.getHours()-5); //EST
@@ -16,13 +14,23 @@ var log = function(entry) {
 const server = http.createServer();
 
 server.on('request', async (req,res)=>{
-    const data = await put()
-    log(req.url);
-    log(data);
-    res.end(JSON.stringify(data));
+    let response = {action:"none"};
+    let args = url.parse(req.url,true).query;
+
+    log(JSON.stringify(args));
+
+    if(args.data){
+        if(typeof args.data === "string"){
+            args.data = JSON.parse(args.data);
+        }
+
+        response = await put(args.data)
+    }
+
+    res.end(JSON.stringify(response));
 });
 
-function put(){
+function put(data){
     return new Promise(resolve => {
         var AWS = require("aws-sdk");
         AWS.config.update({
@@ -34,11 +42,10 @@ function put(){
 
         var item = {
             Item:{
-                "LogID": 1,
                 "InsertDate":new Date()*1,
-                "Data":{"name":"ted","value":"bill"}
+                "Data":JSON.stringify(data)
             },
-            TableName:"Log"
+            TableName:"Journal"
         };
 
         log("Adding: " + JSON.stringify(item));
@@ -49,7 +56,7 @@ function put(){
                     resolve({err:JSON.stringify(err)});
                 }else{
                     log("Great Scott!" + JSON.stringify(data));
-                    resolve({data:JSON.stringify(data)});
+                    resolve({success:JSON.stringify(data)});
                 }
             });
         }catch(e){
