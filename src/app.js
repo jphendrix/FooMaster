@@ -1,5 +1,6 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
+    url = require('URL'),
     fs = require('fs'),
     html = fs.readFileSync('index.html');
 
