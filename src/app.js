@@ -20,12 +20,14 @@ server.on('request', async (req,res)=>{
     
         log("URL Args:" + JSON.stringify(args));
     
+        log("put is a " + typeof put);
+
         //if(args.data){
         //    if(typeof args.data === "string"){
         //        args.data = JSON.parse(args.data);
         //    }
     
-            response = await put("{'bob':'ted'}")
+            response = await put();
         //}
     
         log("after await");
@@ -36,7 +38,7 @@ server.on('request', async (req,res)=>{
     }
 });
 
-function put(d){
+function put(){
     log("38")
     return new Promise(resolve => {
         log("40")
@@ -55,7 +57,7 @@ function put(d){
                 Item:{
                     "InsertDate":new Date()*1,
                     "Source":"Primary",
-                    "Data":JSON.stringify(d)
+                    "Data":"balls"
                 },
                 TableName:"Journal"
             };
