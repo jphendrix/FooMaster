@@ -10,7 +10,7 @@ let success = true;
 
 var log = function(entry) {
     let d = new Date();
-    entry = new d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry
+    entry = d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry;
     fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
     l += "<p>" + entry + "</p>"
 };
