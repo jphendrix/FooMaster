@@ -36,16 +36,49 @@ var server = http.createServer(function (req, res) {
         });
     } else {
         try{
-            let args = url.parse(req.url,true).query;
-            let p = await writeItem();
-            log('Recived'+ JSON.stringify(args));           
+
+            log("Getting aws-sdk");
+            var AWS = require("aws-sdk");
+
+            log("setting region")
+            AWS.config.update({
+              region: "us-east-1",
+              endpoint: "http://localhost:8000"
+            });
+            
+            log("getting doc")
+            var docClient = new AWS.DynamoDB.DocumentClient();
+            
+            var params = {
+                TableName:"Log",
+                Item:{
+                    "LogID": 1,
+                    "InsertDate": 1,
+                    "info":{
+                        "plot": "Nothing happens at all.",
+                        "rating": 0
+                    }
+                }
+            };
+            
+            log("Adding a new item...");
+            docClient.put(params).promis()
+                .then(function(data){
+                    log("Added item:", JSON.stringify(data, null, 2));
+                })
+                .catch(function(err){
+                    success = false;
+                    log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                });
+            log("After promis")        
         }catch(err){
             success = false;
             log(err);
         }
 
+        log("shutting down")
         res.writeHead(200);
-        res.write(success?html:"<html>" + l + "</html>");
+        res.write("<html>" + l + "</html>");
         res.end();
     }
 });
@@ -55,36 +88,3 @@ server.listen(port);
 
 // Put a friendly message on the terminal
 console.log('Server running at http://127.0.0.1:' + port + '/');
-
-async function writeItem(item){
-    var AWS = require("aws-sdk");
-
-    AWS.config.update({
-      region: "us-east-1",
-      endpoint: "http://localhost:8000"
-    });
-    
-    var docClient = new AWS.DynamoDB.DocumentClient();
-    
-    var params = {
-        TableName:"Log",
-        Item:{
-            "LogID": 1,
-            "InsertDate": 1,
-            "info":{
-                "plot": "Nothing happens at all.",
-                "rating": 0
-            }
-        }
-    };
-    
-    log("Adding a new item...");
-    return docClient.put(params, function(err, data) {
-        if (err) {
-            log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-            success = false;
-        } else {
-            log("Added item:", JSON.stringify(data, null, 2));
-        }
-    }).promise();  
-}
