@@ -17,15 +17,15 @@ server.on('request', async (req,res)=>{
     let response = {action:"none"};
     let args = url.parse(req.url,true).query;
 
-    log(JSON.stringify(args));
+    log("URL Args:" + JSON.stringify(args));
 
-    if(args.data){
-        if(typeof args.data === "string"){
-            args.data = JSON.parse(args.data);
-        }
+    //if(args.data){
+    //    if(typeof args.data === "string"){
+    //        args.data = JSON.parse(args.data);
+    //    }
 
-        response = await put(args.data)
-    }
+        response = await put("{'bob':'ted'}")
+    //}
 
     res.end(JSON.stringify(response));
 });
@@ -43,6 +43,7 @@ function put(data){
         var item = {
             Item:{
                 "InsertDate":new Date()*1,
+                "Source":"Primary",
                 "Data":JSON.stringify(data)
             },
             TableName:"Journal"
