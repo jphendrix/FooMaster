@@ -6,13 +6,17 @@ var port = process.env.PORT || 3000,
 
     var l = "<h1>hello world</h1>"
 
+let success = true;
+
 var log = function(entry) {
-    entry = new Date().toISOString() + ' - ' + entry
+    let d = new Date();
+    entry = new d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry
     fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
     l += "<p>" + entry + "</p>"
 };
 
 var server = http.createServer(function (req, res) {
+    log("====================== NEW ============================");
     if (req.method === 'POST') {
         var body = '';
 
@@ -32,7 +36,6 @@ var server = http.createServer(function (req, res) {
         });
     } else {
         try{
-            let success = true;
             let args = url.parse(req.url,true).query;
             log('Recived'+ JSON.stringify(args)); 
 
