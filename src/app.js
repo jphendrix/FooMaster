@@ -24,9 +24,37 @@ server.on('request', async (req,res)=>{
 
 function put(){
     return new Promise(resolve => {
-        setTimeout(()=>{
-            resolve({data:1});
-        },1000);
+        var AWS = require("aws-sdk");
+        AWS.config.update({
+            region:"us-east-1",
+            endpoint:"http://localhost:8000"
+        });
+
+        var docClient = new AWS.DynamoDB.DocumentClient();
+
+        var item = {
+            Item:{
+                "LogID": {N:1},
+                "InsertDate":{N:1},
+                "LogData":{S:"test"}
+            },
+            TableName:"Log"
+        };
+
+        log("Adding: " + JSON.stringify(item));
+        try{
+            docClient.put(item,function(err,data){
+                if(err){
+                    log("Err putting: " + JSON.stringify(err));
+                    resolve({err:JSON.stringify(err)});
+                }else{
+                    log("Great Scott!" + JSON.stringify(data));
+                    resolve({data:JSON.stringify(data)});
+                }
+            });
+        }catch(e){
+            resolve({e:JSON.stringify(e)});
+        }
     });
 }
 
