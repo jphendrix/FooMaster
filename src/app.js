@@ -26,6 +26,8 @@ var server = http.createServer(function (req, res) {
             res.end();
         });
     } else {
+        let args = url.parse(req.url,true).query;
+        log('Recived'+args); 
         res.writeHead(200);
         res.write(html);
         res.end();
