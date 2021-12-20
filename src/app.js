@@ -29,7 +29,7 @@ var server = http.createServer(function (req, res) {
     } else {
         try{
             let args = url.parse(req.url,true).query;
-            log('Recived'+args); 
+            log('Recived'+ JSON.stringify(args)); 
 
             var AWS = require("aws-sdk");
 
@@ -44,17 +44,17 @@ var server = http.createServer(function (req, res) {
                 TableName:"Log",
                 Item:{
                     "LogID": 1,
-                    "InsertDate": new Date()*1,
-                    "info":args
+                    "InsertDate": 1,
+                    "info":{"ted":"bob"}
                 }
             };
             
-            console.log("Adding a new item...");
+            log("Adding a new item...");
             docClient.put(params, function(err, data) {
                 if (err) {
-                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                    log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
                 } else {
-                    console.log("Added item:", JSON.stringify(data, null, 2));
+                    log("Added item:", JSON.stringify(data, null, 2));
                 }
             });            
         }catch(err){
