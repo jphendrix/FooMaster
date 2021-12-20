@@ -14,8 +14,10 @@ var log = function(entry) {
 const server = http.createServer();
 
 server.on('request', async (req,res)=>{
+    let response = {action:"none"};
+
     try{
-        let response = {action:"none"};
+        
         let args = url.parse(req.url,true).query;
     
         log("URL Args:" + JSON.stringify(args));
@@ -27,15 +29,21 @@ server.on('request', async (req,res)=>{
         //        args.data = JSON.parse(args.data);
         //    }
     
-            response = await put();
+            put()
+                .then((x)=>{response = x})
+                .catch((x)=>{response = x});
         //}
     
-        log("after await");
-        res.end(JSON.stringify(response));
+        log("after await" + JSON.stringify(response));
+
     }catch(err){
-        log("inside catch")
-        res.end("err: "+ JSON.stringify(err) + " ("+err+")");
+        log("inside catch");
+        log(err+'');
+        log(err);
+        log(JSON.stringify(err));
     }
+
+    res.end(JSON.stringify(response));
 });
 
 function put(){
