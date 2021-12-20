@@ -43,9 +43,15 @@ var server = http.createServer(function (req, res) {
             var params = {
                 TableName:"Log",
                 Item:{
-                    "LogID": 1,
-                    "InsertDate": 1,
-                    "info":{"ted":"bob"}
+                        "LogID": {
+                          "N": "1"
+                        },
+                        "InsertDate": {
+                          "N": "1"
+                        },
+                        "data":{
+                            "S":"{'ted':'bob'}"
+                        }
                 }
             };
             
