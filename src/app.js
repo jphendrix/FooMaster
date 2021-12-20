@@ -32,36 +32,43 @@ server.on('request', async (req,res)=>{
 
 function put(data){
     return new Promise(resolve => {
-        var AWS = require("aws-sdk");
-        AWS.config.update({
-            region:"us-east-1",
-            endpoint:"http://dynamodb.us-east-1.amazonaws.com"
-        });
 
-        var docClient = new AWS.DynamoDB.DocumentClient();
-
-        var item = {
-            Item:{
-                "InsertDate":new Date()*1,
-                "Source":"Primary",
-                "Data":JSON.stringify(data)
-            },
-            TableName:"Journal"
-        };
-
-        log("Adding: " + JSON.stringify(item));
         try{
-            docClient.put(item,function(err,data){
-                if(err){
-                    log("Err putting: " + JSON.stringify(err));
-                    resolve({err:JSON.stringify(err)});
-                }else{
-                    log("Great Scott!" + JSON.stringify(data));
-                    resolve({success:JSON.stringify(data)});
-                }
+            log("Trying the best I can");
+            
+            var AWS = require("aws-sdk");
+            AWS.config.update({
+                region:"us-east-1",
+                endpoint:"http://dynamodb.us-east-1.amazonaws.com"
             });
-        }catch(e){
-            resolve({e:JSON.stringify(e)});
+    
+            var docClient = new AWS.DynamoDB.DocumentClient();
+    
+            var item = {
+                Item:{
+                    "InsertDate":new Date()*1,
+                    "Source":"Primary",
+                    "Data":JSON.stringify(data)
+                },
+                TableName:"Journal"
+            };
+    
+            log("Adding: " + JSON.stringify(item));
+            try{
+                docClient.put(item,function(err,data){
+                    if(err){
+                        log("Err putting: " + JSON.stringify(err));
+                        resolve({err:JSON.stringify(err)});
+                    }else{
+                        log("Great Scott!" + JSON.stringify(data));
+                        resolve({success:JSON.stringify(data)});
+                    }
+                });
+            }catch(e){
+                resolve({e:JSON.stringify(e)});
+            }
+        }catch(e1){
+            resolve({e1:JSON.stringify(e1)});
         }
     });
 }
