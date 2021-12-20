@@ -4,12 +4,12 @@ var port = process.env.PORT || 3000,
     fs = require('fs'),
     html = fs.readFileSync('index.html');
 
-    var log = "<h1>hello world</h1>"
+    var l = "<h1>hello world</h1>"
 
 var log = function(entry) {
     entry = new Date().toISOString() + ' - ' + entry
     fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
-    log += "<p>" + entry + "</p>"
+    l += "<p>" + entry + "</p>"
 };
 
 var server = http.createServer(function (req, res) {
@@ -72,7 +72,7 @@ var server = http.createServer(function (req, res) {
         }
 
         res.writeHead(200);
-        res.write(success?html:"<html>" + log + "</html>");
+        res.write(success?html:"<html>" + l + "</html>");
         res.end();
     }
 });
