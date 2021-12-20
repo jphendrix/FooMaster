@@ -28,15 +28,18 @@ server.on('request', async (req,res)=>{
             response = await put("{'bob':'ted'}")
         //}
     
+        log("after await");
         res.end(JSON.stringify(response));
     }catch(err){
-        res.end(JSON.stringify(err));
+        log("inside catch")
+        res.end("err: "+ JSON.stringify(err) + " ("+err+")");
     }
 });
 
-function put(data){
+function put(d){
+    log("38")
     return new Promise(resolve => {
-
+        log("40")
         try{
             log("Trying the best I can");
 
@@ -52,7 +55,7 @@ function put(data){
                 Item:{
                     "InsertDate":new Date()*1,
                     "Source":"Primary",
-                    "Data":JSON.stringify(data)
+                    "Data":JSON.stringify(d)
                 },
                 TableName:"Journal"
             };
