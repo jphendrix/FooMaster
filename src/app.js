@@ -43,15 +43,12 @@ var server = http.createServer(function (req, res) {
             var params = {
                 TableName:"Log",
                 Item:{
-                        "LogID": {
-                          "N": "1"
-                        },
-                        "InsertDate": {
-                          "N": "1"
-                        },
-                        "data":{
-                            "S":"{'ted':'bob'}"
-                        }
+                    "LogID": 1,
+                    "InsertDate": 1,
+                    "info":{
+                        "plot": "Nothing happens at all.",
+                        "rating": 0
+                    }
                 }
             };
             
