@@ -8,7 +8,6 @@ var log = function(entry) {
     d.setHours(d.getHours()-5); //EST
     entry = d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry;
     fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
-    l += "<p>" + entry + "</p>"
 };
 
 const server = http.createServer();
