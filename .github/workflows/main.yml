@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Generate deployment package
-      run: zip -r deploy.zip . -x '*.git*'
+      run: zip -r deploy.zip src -x '*.git*'
 
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -30,5 +30,5 @@ jobs:
         application_name: FooMaster
         environment_name: Foomaster-env
         version_label: 1_0
-        region: us-west-2
+        region: us-east-1
         deployment_package: deploy.zip
