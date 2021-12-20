@@ -37,38 +37,8 @@ var server = http.createServer(function (req, res) {
     } else {
         try{
             let args = url.parse(req.url,true).query;
-            log('Recived'+ JSON.stringify(args)); 
-
-            var AWS = require("aws-sdk");
-
-            AWS.config.update({
-              region: "us-east-1",
-              endpoint: "http://localhost:8000"
-            });
-            
-            var docClient = new AWS.DynamoDB.DocumentClient();
-            
-            var params = {
-                TableName:"Log",
-                Item:{
-                    "LogID": 1,
-                    "InsertDate": 1,
-                    "info":{
-                        "plot": "Nothing happens at all.",
-                        "rating": 0
-                    }
-                }
-            };
-            
-            log("Adding a new item...");
-            docClient.put(params, function(err, data) {
-                if (err) {
-                    log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                    success = false;
-                } else {
-                    log("Added item:", JSON.stringify(data, null, 2));
-                }
-            });            
+            let p = await writeItem();
+            log('Recived'+ JSON.stringify(args));           
         }catch(err){
             success = false;
             log(err);
@@ -85,3 +55,36 @@ server.listen(port);
 
 // Put a friendly message on the terminal
 console.log('Server running at http://127.0.0.1:' + port + '/');
+
+async function writeItem(item){
+    var AWS = require("aws-sdk");
+
+    AWS.config.update({
+      region: "us-east-1",
+      endpoint: "http://localhost:8000"
+    });
+    
+    var docClient = new AWS.DynamoDB.DocumentClient();
+    
+    var params = {
+        TableName:"Log",
+        Item:{
+            "LogID": 1,
+            "InsertDate": 1,
+            "info":{
+                "plot": "Nothing happens at all.",
+                "rating": 0
+            }
+        }
+    };
+    
+    log("Adding a new item...");
+    return docClient.put(params, function(err, data) {
+        if (err) {
+            log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+            success = false;
+        } else {
+            log("Added item:", JSON.stringify(data, null, 2));
+        }
+    }).promise();  
+}
