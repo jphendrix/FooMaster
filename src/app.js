@@ -15,7 +15,7 @@ var log = function(entry) {
 
 const server = http.createServer();
 
-server.on('request', async (reg,res)=>{
+server.on('request', async (req,res)=>{
     const data = await put()
     log(req.url);
     log(data);
