@@ -14,20 +14,24 @@ var log = function(entry) {
 const server = http.createServer();
 
 server.on('request', async (req,res)=>{
-    let response = {action:"none"};
-    let args = url.parse(req.url,true).query;
-
-    log("URL Args:" + JSON.stringify(args));
-
-    //if(args.data){
-    //    if(typeof args.data === "string"){
-    //        args.data = JSON.parse(args.data);
-    //    }
-
-        response = await put("{'bob':'ted'}")
-    //}
-
-    res.end(JSON.stringify(response));
+    try{
+        let response = {action:"none"};
+        let args = url.parse(req.url,true).query;
+    
+        log("URL Args:" + JSON.stringify(args));
+    
+        //if(args.data){
+        //    if(typeof args.data === "string"){
+        //        args.data = JSON.parse(args.data);
+        //    }
+    
+            response = await put("{'bob':'ted'}")
+        //}
+    
+        res.end(JSON.stringify(response));
+    }catch(err){
+        res.end(JSON.stringify(err));
+    }
 });
 
 function put(data){
@@ -35,7 +39,7 @@ function put(data){
 
         try{
             log("Trying the best I can");
-            
+
             var AWS = require("aws-sdk");
             AWS.config.update({
                 region:"us-east-1",
