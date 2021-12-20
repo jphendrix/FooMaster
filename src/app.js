@@ -16,12 +16,15 @@ const server = http.createServer();
 server.on('request', async (req,res)=>{
     let response = {action:"none"};
 
+    log("Starting Up");
     try{
         
+        log("22");
         let args = url.parse(req.url,true).query;
     
+        log("24");
         log("URL Args:" + JSON.stringify(args));
-    
+        log("26");
         log("put is a " + typeof put);
 
         //if(args.data){
@@ -38,6 +41,7 @@ server.on('request', async (req,res)=>{
 
     }catch(err){
         log("inside catch");
+        log("err is " + typeof err);
         log(err+'');
         log(err);
         log(JSON.stringify(err));
