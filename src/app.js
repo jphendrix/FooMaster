@@ -10,6 +10,7 @@ let success = true;
 
 var log = function(entry) {
     let d = new Date();
+    d.setHours(d.getHours()-5); //EST
     entry = d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry;
     fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
     l += "<p>" + entry + "</p>"
@@ -62,7 +63,7 @@ var server = http.createServer(function (req, res) {
             };
             
             log("Adding a new item...");
-            docClient.put(params).promis()
+            docClient.put(params).promise()
                 .then(function(data){
                     log("Added item:", JSON.stringify(data, null, 2));
                 })
@@ -70,7 +71,7 @@ var server = http.createServer(function (req, res) {
                     success = false;
                     log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
                 });
-            log("After promis")        
+            log("After promise")        
         }catch(err){
             success = false;
             log(err);
