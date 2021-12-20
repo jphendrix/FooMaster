@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Generate deployment package
-      run: zip -r deploy.zip src -x '*.git*'
+      run: zip -r deploy.zip src/ -x '*.git*'
 
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -29,6 +29,6 @@ jobs:
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: FooMaster
         environment_name: Foomaster-env
-        version_label: 1_0
+        version_label: FooMaster_${{ github.run_id }}_${{ github.run_number }}
         region: us-east-1
         deployment_package: deploy.zip
