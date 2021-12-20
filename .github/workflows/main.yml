@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Generate deployment package
-      run: cd src; zip -r ../deploy.zip
+      run: zip -r -j deploy.zip src/* -x '*.git*'
 
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
