@@ -1,6 +1,6 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
-    url = require('URL'),
+    //url = require('URL'),
     fs = require('fs'),
     html = fs.readFileSync('index.html');
 
@@ -27,7 +27,7 @@ var server = http.createServer(function (req, res) {
             res.end();
         });
     } else {
-        let args = url.parse(req.url,true).query;
+        //let args = url.parse(req.url,true).query;
         log('Recived'+args); 
         res.writeHead(200);
         res.write(html);
