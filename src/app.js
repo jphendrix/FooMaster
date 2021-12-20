@@ -35,8 +35,8 @@ function put(){
         var item = {
             Item:{
                 "LogID": 1,
-                "InsertDate":1,
-                "LogData":"test"
+                "InsertDate":new Date()*1,
+                "Data":{"name":"ted","value":"bill"}
             },
             TableName:"Log"
         };
