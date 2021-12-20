@@ -1,7 +1,7 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
     url = require('url'),
-    fs = require('fs'),
+    fs = require('fs');
 
     var l = "<h1>hello world</h1>"
 
