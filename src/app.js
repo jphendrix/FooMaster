@@ -4,8 +4,12 @@ var port = process.env.PORT || 3000,
     fs = require('fs'),
     html = fs.readFileSync('index.html');
 
+    var log = "<h1>hello world</h1>"
+
 var log = function(entry) {
-    fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
+    entry = new Date().toISOString() + ' - ' + entry
+    fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
+    log += "<p>" + entry + "</p>"
 };
 
 var server = http.createServer(function (req, res) {
@@ -28,6 +32,7 @@ var server = http.createServer(function (req, res) {
         });
     } else {
         try{
+            let success = true;
             let args = url.parse(req.url,true).query;
             log('Recived'+ JSON.stringify(args)); 
 
@@ -56,16 +61,18 @@ var server = http.createServer(function (req, res) {
             docClient.put(params, function(err, data) {
                 if (err) {
                     log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                    success = false;
                 } else {
                     log("Added item:", JSON.stringify(data, null, 2));
                 }
             });            
         }catch(err){
+            success = false;
             log(err);
         }
 
         res.writeHead(200);
-        res.write(html);
+        res.write(success?html:"<html>" + log + "</html>");
         res.end();
     }
 });
