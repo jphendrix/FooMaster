@@ -7,52 +7,38 @@ var log = function(entry) {
     let d = new Date();
     d.setHours(d.getHours()-5); //EST
     entry = d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry;
-    fs.appendFileSync('/tmp/sample-app.log',  entry + '\n');
+    fs.appendFileSync('/tmp/foomaster.log',  entry + '\n');
 };
 
 const server = http.createServer();
 
 server.on('request', async (req,res)=>{
     let args = url.parse(req.url,true).query;
-    log("URL Args:" + JSON.stringify(args));
 
-    if(args.data){
-
-        log("Data is a: " + typeof args.data);
-        log("Data:" + args.data);
-
-        log("Putting data:");
+    if(args && args.data){
         put(args.data)
             .then((x)=>{
-                log("putted: " + JSON.stringify(x||{}));
                 res.end(JSON.stringify(x||{}));
             })
             .catch((x)=>{
-                log("Failed putted: " + JSON.stringify(x||{}));
                 res.end(JSON.stringify(x||{}));
             });
     }else{
-        log("No Data");
         res.end(JSON.stringify({action:"none"}));
     }
 });
 
 function put(d){
-    log("Putting d:" + JSON.stringify(d||{}));
     return new Promise(resolve => {
-        log("In Promise");
         try{
-            log("creating sdk");
             var AWS = require("aws-sdk");
             AWS.config.update({
                 region:"us-east-1",
                 endpoint:"http://dynamodb.us-east-1.amazonaws.com"
             });
     
-            log("creating doc");
             var docClient = new AWS.DynamoDB.DocumentClient();
     
-            log("creating item")
             var item = {
                 Item:{
                     "InsertDate":new Date()*1,
@@ -60,20 +46,15 @@ function put(d){
                     "Data":d
                 },TableName:"Journal"
             };
-    
-            log("Adding: " + JSON.stringify(item||{}));
 
             docClient.put(item,function(err,data){
                 if(err){
-                    log("Err putting: " + JSON.stringify(err));
-                    resolve({error:JSON.stringify(err)});
+                    log("Err putting: " + err);
+                    resolve({error:err});
                 }else{
-                    log("Great Scott!" + JSON.stringify(data));
-                    resolve({success:JSON.stringify(data)});
+                    resolve({success:d});
                 }
             });
-
-            log("sent item");
         }catch(err){
             log("got error" + JSON.stringify(err||{}));
             resolve({error:JSON.stringify(err)});
