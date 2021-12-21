@@ -13,30 +13,24 @@ var log = function(entry) {
 const server = http.createServer();
 
 server.on('request', async (req,res)=>{
-    try{
-        let args = url.parse(req.url,true).query;
-    
-        log("URL Args:" + JSON.stringify(args));
+    let args = url.parse(req.url,true).query;
+    log("URL Args:" + JSON.stringify(args));
 
-        if(args.data){
-            if(typeof args.data === "string"){
-                args.data = JSON.parse(args.data);
-            }
-    
-            put(args.data)
-                .then((x)=>{
-                    res.end(JSON.stringify(x));
-                })
-                .catch((x)=>{
-                    res.end(JSON.stringify(x));
-                });
+    if(args.data){
+        if(typeof args.data === "string"){
+            args.data = JSON.parse(args.data);
         }
 
-    }catch(err){
-        res.end(JSON.stringify(err));
+        put(args.data)
+            .then((x)=>{
+                res.end(JSON.stringify(x));
+            })
+            .catch((x)=>{
+                res.end(JSON.stringify(x));
+            });
+    }else{
+        res.end(JSON.stringify({action:"none"}));
     }
-
-    res.end(JSON.stringify({action:"none"}));
 });
 
 function put(d){
