@@ -18,11 +18,8 @@ server.on('request', async (req,res)=>{
 
     if(args.data){
 
-        log("Data:" + JSON.stringify(args.data));
-
-        if(typeof args.data === "string"){
-            args.data = JSON.parse(args.data);
-        }
+        log("Data is a: " + typeof args.data);
+        log("Data:" + args.data);
 
         log("Putting data:");
         put(args.data)
@@ -60,7 +57,7 @@ function put(d){
                 Item:{
                     "InsertDate":new Date()*1,
                     "Source":"Primary",
-                    "Data":JSON.stringify(d)
+                    "Data":d
                 },TableName:"Journal"
             };
     
