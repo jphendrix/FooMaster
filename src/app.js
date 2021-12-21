@@ -17,33 +17,45 @@ server.on('request', async (req,res)=>{
     log("URL Args:" + JSON.stringify(args));
 
     if(args.data){
+
+        log("Data:" + JSON.stringify(args.data));
+
         if(typeof args.data === "string"){
             args.data = JSON.parse(args.data);
         }
 
+        log("Putting data:");
         put(args.data)
             .then((x)=>{
-                res.end(JSON.stringify(x));
+                log("putted: " + JSON.stringify(x||{}));
+                res.end(JSON.stringify(x||{}));
             })
             .catch((x)=>{
-                res.end(JSON.stringify(x));
+                log("Failed putted: " + JSON.stringify(x||{}));
+                res.end(JSON.stringify(x||{}));
             });
     }else{
+        log("No Data");
         res.end(JSON.stringify({action:"none"}));
     }
 });
 
 function put(d){
+    log("Putting d:" + JSON.stringify(d||{}));
     return new Promise(resolve => {
+        log("In Promise");
         try{
+            log("creating sdk");
             var AWS = require("aws-sdk");
             AWS.config.update({
                 region:"us-east-1",
                 endpoint:"http://dynamodb.us-east-1.amazonaws.com"
             });
     
+            log("creating doc");
             var docClient = new AWS.DynamoDB.DocumentClient();
     
+            log("creating item")
             var item = {
                 Item:{
                     "InsertDate":new Date()*1,
@@ -52,7 +64,7 @@ function put(d){
                 },TableName:"Journal"
             };
     
-            log("Adding: " + JSON.stringify(item));
+            log("Adding: " + JSON.stringify(item||{}));
 
             docClient.put(item,function(err,data){
                 if(err){
@@ -63,7 +75,10 @@ function put(d){
                     resolve({success:JSON.stringify(data)});
                 }
             });
+
+            log("sent item");
         }catch(err){
+            log("got error" + JSON.stringify(err||{}));
             resolve({error:JSON.stringify(err)});
         }
     });
