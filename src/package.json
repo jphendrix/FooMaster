@@ -1,8 +1,11 @@
 {
-  "name": "Elastic-Beanstalk-Sample-App",
+  "name": "foomaster",
   "version": "0.0.1",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "latest"
+  }
+  ,
   "scripts": {
     "start": "node app.js"
   }

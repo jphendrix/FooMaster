@@ -1,39 +1,66 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
-    fs = require('fs'),
-    html = fs.readFileSync('index.html');
+    url = require('url'),
+    fs = require('fs');
 
 var log = function(entry) {
-    fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
+    let d = new Date();
+    d.setHours(d.getHours()-5); //EST
+    entry = d.toLocaleDateString() + ' ' + d.toLocaleTimeString()  + ' - ' + entry;
+    fs.appendFileSync('/tmp/foomaster.log',  entry + '\n');
 };
 
-var server = http.createServer(function (req, res) {
-    if (req.method === 'POST') {
-        var body = '';
+const server = http.createServer();
 
-        req.on('data', function(chunk) {
-            body += chunk;
-        });
+server.on('request', async (req,res)=>{
+    let args = url.parse(req.url,true).query;
 
-        req.on('end', function() {
-            if (req.url === '/') {
-                log('Received message: ' + body);
-            } else if (req.url = '/scheduled') {
-                log('Received task ' + req.headers['x-aws-sqsd-taskname'] + ' scheduled at ' + req.headers['x-aws-sqsd-scheduled-at']);
-            }
-
-            res.writeHead(200, 'OK', {'Content-Type': 'text/plain'});
-            res.end();
-        });
-    } else {
-        res.writeHead(200);
-        res.write(html);
-        res.end();
+    if(args && args.data){
+        put(args.data)
+            .then((x)=>{
+                res.end(JSON.stringify(x||{}));
+            })
+            .catch((x)=>{
+                res.end(JSON.stringify(x||{}));
+            });
+    }else{
+        res.end(JSON.stringify({action:"none"}));
     }
 });
 
+function put(d){
+    return new Promise(resolve => {
+        try{
+            var AWS = require("aws-sdk");
+            AWS.config.update({
+                region:"us-east-1",
+                endpoint:"http://dynamodb.us-east-1.amazonaws.com"
+            });
+    
+            var docClient = new AWS.DynamoDB.DocumentClient();
+    
+            var item = {
+                Item:{
+                    "InsertDate":new Date()*1,
+                    "Source":"Primary",
+                    "Data":d
+                },TableName:"Journal"
+            };
+
+            docClient.put(item,function(err,data){
+                if(err){
+                    log("Err putting: " + err);
+                    resolve({error:err});
+                }else{
+                    resolve({success:d});
+                }
+            });
+        }catch(err){
+            log("got error" + JSON.stringify(err||{}));
+            resolve({error:JSON.stringify(err)});
+        }
+    });
+}
+
 // Listen on port 3000, IP defaults to 127.0.0.1
 server.listen(port);
-
-// Put a friendly message on the terminal
-console.log('Server running at http://127.0.0.1:' + port + '/');
